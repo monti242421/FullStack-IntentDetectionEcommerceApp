@@ -1,26 +1,31 @@
 import { MdDelete } from "react-icons/md";
-const CartItem = () => {
-  const Data = {
-    id: "001",
-    image: "images/1.jpg",
-    company: "Carlton London",
-    item_name: "Rhodium-Plated CZ Floral Studs",
-    original_price: 1045,
-    current_price: 606,
-    discount_percentage: 42,
-    return_period: 14,
-    delivery_date: "10 Oct 2023",
-    rating: {
-      stars: 4.5,
-      count: 1400,
-    },
+import { useDispatch } from "react-redux";
+import { cartSliceAction } from "../store/cartSlice";
+import axios from "axios";
+const CartItem = ({ Data }) => {
+  const dispatch = useDispatch();
+  const HandleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:4000/cart/${Data.productId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      dispatch(cartSliceAction.removefromcart(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <div className="cartitem">
-      <img src={Data.image} width="150px" height="200px" />
+      <img src={Data.image_Url} width="150px" height="200px" />
       <div className="cartitemdetails">
-        <h5 class="card-title">{Data.company}</h5>
-        <p class="card-text">{Data.item_name}</p>
+        <h5 className="card-title">{Data.company_name}</h5>
+        <p className="card-text">{Data.item_name}</p>
         <div className="price">
           <span className="current-price" style={{ fontWeight: "bold" }}>
             Rs {Data.current_price}
@@ -49,7 +54,7 @@ const CartItem = () => {
         </div>
       </div>
 
-      <div className="deleteCartItem">
+      <div className="deleteCartItem" onClick={HandleDelete}>
         <MdDelete size="40" />
       </div>
     </div>

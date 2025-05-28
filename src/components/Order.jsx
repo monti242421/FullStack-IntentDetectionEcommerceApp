@@ -1,43 +1,39 @@
-const Order = () => {
+const Order = ({ Data }) => {
+  const productDetail = JSON.parse(Data.details);
   return (
     <>
-      <ul class="list-group " style={{ width: "700px", margin: "20px" }}>
+      <ul className="list-group " style={{ width: "700px", margin: "20px" }}>
         <li
-          class="list-group-item "
+          className="list-group-item "
           aria-current="true"
-          style={{ fontWeight: "bold" }}
+          style={{ fontWeight: "bold", backgroundColor: "#f5faf9" }}
         >
-          Order ID: #123456 | Date: 12/05/2021 | Total Price: Rs 3000 | Status:
-          Delivered
+          Order ID: #{Data.orderId} | Date: {Data.date} | Total Price: Rs{" "}
+          {Data.total_price} | Status:
+          {Data.status}
         </li>
-        <li class="list-group-item">
-          <div className="row">
-            <div className="col-2">
-              <img src="images/1.jpg" width="70" />
-            </div>
-            <div className="col-5">
-              <p style={{ fontWeight: "bold" }}>Bluetooth HeadPhones</p>
-              <p>Qty: 1</p>
-            </div>
-            <div className="col-2" style={{ fontWeight: "bold" }}>
-              Rs 1750
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div className="row">
-            <div className="col-2">
-              <img src="images/1.jpg" width="70" />
-            </div>
-            <div className="col-5">
-              <p style={{ fontWeight: "bold" }}>Bluetooth HeadPhones</p>
-              <p>Qty: 1</p>
-            </div>
-            <div className="col-2" style={{ fontWeight: "bold" }}>
-              Rs 1750
-            </div>
-          </div>
-        </li>
+        {productDetail.map((detail) => {
+          return (
+            <li
+              className="list-group-item"
+              style={{ backgroundColor: "#f0f7f7" }}
+            >
+              <div className="row">
+                <div className="col-2">
+                  <img src={detail.image_Url} width="70" />
+                </div>
+                <div className="col-5">
+                  <p style={{ fontWeight: "bold" }}>{detail.item_name}</p>
+                  <p>Qty: 1</p>
+                </div>
+                <div className="col-2" style={{ fontWeight: "bold" }}>
+                  Rs {detail.current_price}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+        ;
       </ul>
     </>
   );

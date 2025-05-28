@@ -1,46 +1,141 @@
 import { FaRegHeart } from "react-icons/fa";
-const Product = () => {
-  const Data = {
-    id: "001",
-    image: "images/1.jpg",
-    company: "Carlton London",
-    item_name: "Rhodium-Plated CZ Floral Studs",
-    original_price: 1045,
-    current_price: 606,
-    discount_percentage: 42,
-    return_period: 14,
-    delivery_date: "10 Oct 2023",
-    rating: {
-      stars: 4.5,
-      count: 1400,
-    },
+import { FaHeart } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { cartSliceAction } from "../store/cartSlice";
+import { wishlistSliceAction } from "../store/wislistSlice";
+import axios from "axios";
+const Product = ({ Data }) => {
+  const dispatch = useDispatch();
+  const cart = useSelector((store) => store.cart);
+  const wishlist = useSelector((store) => store.wishlist);
+  const productFoundFromCart = cart.some((item) => {
+    return item.productId === Data.productId;
+  });
+  const productFoundFromWishlist = wishlist.some((item) => {
+    return item.productId === Data.productId;
+  });
+  const HandleAddtoCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const productId = Data.productId;
+      console.log(Data);
+      const response = await axios.post(
+        "http://localhost:4000/cart/",
+        {
+          productId: productId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      dispatch(cartSliceAction.addtocart(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const HandleRemoveFromCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:4000/cart/${Data.productId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      dispatch(cartSliceAction.removefromcart(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const HandleAddtoWishlist = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const productId = Data.productId;
+      const response = await axios.post(
+        "http://localhost:4000/wishlist/",
+        {
+          productId: productId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      // dispatch(cartSliceAction.addtocart(response.data.data));
+      dispatch(wishlistSliceAction.addtowishlist(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
+
+    //  dispatch(wishlistSliceAction.addtowishlist(Data.id));
+  };
+  const HandleRemoveFromWishlist = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:4000/wishlist/${Data.productId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      // dispatch(cartSliceAction.removefromcart(response.data.data));
+      dispatch(wishlistSliceAction.removefromwislist(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
+    // dispatch(wishlistSliceAction.removefromwislist(Data.id));
   };
   return (
     <div className="card col-3 productcontainer">
-      <img src={Data.image} class="card-img-top" alt="..." />
+      <img src={Data.image_Url} className="card-img-top" alt="..." />
       <div className="rating">
-        {Data.rating.stars} ⭐ | {Data.rating.count}
+        {Data.rating} ⭐ | {25}
       </div>
-      <h5 class="card-title">{Data.company}</h5>
-      <p class="card-text">{Data.item_name}</p>
+      <h3 className="card-title">{Data.company_name}</h3>
+      <h5 className="card-text">{Data.item_name}</h5>
+      <span class="card-category">{Data.category}</span>
       <div className="price">
         <span className="current-price" style={{ fontWeight: "bold" }}>
-          Rs {Data.current_price}
+          Rs {Math.floor(Data.current_price)}
         </span>
         <span
           className="original-price"
           style={{ textDecoration: "line-through", margin: "10px" }}
         >
-          Rs {Data.original_price}
+          Rs {Math.floor(Data.original_price)}
         </span>
         <span className="discount" style={{ color: "red" }}>
           ({Data.discount_percentage}% OFF)
         </span>
       </div>
-      <button class="btn btn-primary addToCard">Add to Cart</button>
-      <button className="addToWishList">
-        <FaRegHeart size={30} />
-      </button>
+      {!productFoundFromCart ? (
+        <button className="btn btn-primary addToCart" onClick={HandleAddtoCart}>
+          Add to Cart
+        </button>
+      ) : (
+        <button
+          className="btn btn-danger addToCart"
+          onClick={HandleRemoveFromCart}
+        >
+          Remove From Cart
+        </button>
+      )}
+      {!productFoundFromWishlist ? (
+        <button className="addToWishList" onClick={HandleAddtoWishlist}>
+          <FaRegHeart size={30} />
+        </button>
+      ) : (
+        <button className="addToWishList" onClick={HandleRemoveFromWishlist}>
+          <FaHeart size={30} style={{ color: "red" }} />
+        </button>
+      )}
     </div>
   );
 };

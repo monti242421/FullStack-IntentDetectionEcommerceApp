@@ -2,11 +2,25 @@ import { IoCartOutline } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { FaUserLarge } from "react-icons/fa6";
 import { IoHomeOutline } from "react-icons/io5";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Button } from "bootstrap";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
 const Header = () => {
+  const navigate = useNavigate();
+  const HandleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const cartProducts = useSelector((store) => store.cart);
+  const wishlistProducts = useSelector((store) => store.wishlist);
+
+  const [showLogout, setshowLogout] = useState(false);
   return (
     <header className="topheader">
-      <div class="headergrid">
+      <div className="headergrid">
         <div className="logo">
           <NavLink
             to="/"
@@ -14,14 +28,14 @@ const Header = () => {
               isActive ? "nav-link active-tab" : "nav-link";
             }}
           >
-            <h1>eCommerce</h1>
+            <h1>E-Commerce</h1>
           </NavLink>
         </div>
         <div className="Navlinks">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? "navlink activetab" : "navlink"
+              isActive ? "navlink activetab hometab" : "navlink hometab"
             }
           >
             Home
@@ -50,10 +64,10 @@ const Header = () => {
               isActive ? "navlinkicon activetabicon" : "navlinkicon"
             }
           >
-            <div class="position-relative">
+            <div className="position-relative">
               <IoCartOutline size={30}></IoCartOutline>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                0
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                {cartProducts.length}
               </span>
             </div>
           </NavLink>
@@ -64,28 +78,46 @@ const Header = () => {
             }
           >
             <div
-              class="position-relative"
+              className="position-relative"
               style={{
                 color: "red",
               }}
             >
               <FaHeart size={30} />
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                0
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                {wishlistProducts.length}
               </span>
             </div>
           </NavLink>
           <div
-            class="position-relative"
+            className="position-relative userButton"
             style={{
               display: "inline-block",
               marginLeft: "20px",
             }}
           >
-            <FaUserLarge size={40} />
-            <span class="position-absolute top-20 start-100 translate-middle badge rounded-pill bg-danger">
-              monti242421
-            </span>
+            <button
+              style={{ background: "none", border: "none" }}
+              onClick={() => {
+                if (showLogout) {
+                  setshowLogout(false);
+                } else {
+                  setshowLogout(true);
+                }
+              }}
+            >
+              <FaUserLarge size={40} />
+              <span className="position-absolute top-20 start-100 translate-middle badge rounded-pill bg-danger">
+                monti242421
+              </span>
+            </button>
+            <button
+              className="logoutButton"
+              hidden={showLogout ? "" : "hidden"}
+              onClick={HandleLogout}
+            >
+              LogOut
+            </button>
           </div>
         </div>
       </div>
