@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 // Replace with your actual Mistral API key
-const MISTRAL_API_KEY = "lOoPCKVmweVE8N44qA0ksqquuV83UmCy";
+const MISTRAL_API_KEY = "";
 const MODEL = "mistral-small"; // or 'mistral-medium' if you have access
 const API_URL = "https://api.mistral.ai/v1/chat/completions";
 
